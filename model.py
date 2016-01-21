@@ -42,3 +42,16 @@ zlecenia_do_zatwierdzenia = select_wrapper("""
     INNER JOIN zlecenie ON (zamowienie.id = zamowienie_id)
     WHERE zaakceptowane_przez_klienta = false
 """)
+
+users = select_wrapper("""
+    SELECT id, nazwa FROM klient ORDER BY nazwa
+""")
+
+
+def save_order(name, description, client_id):
+    with connection.cursor() as cur:
+        cur.execute("""
+            INSERT INTO zamowienie (nazwa, opis, klient_id, czas_zlozenia)
+            VALUES (%s, %s, %s, now())
+        """, (name, description, client_id))
+    connection.commit()

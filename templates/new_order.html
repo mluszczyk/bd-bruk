@@ -1,6 +1,28 @@
 {% extends 'base.html' %}
 
+{% macro render_field(field) %}
+  <dt>{{ field.label }}
+  <dd>{{ field(**kwargs)|safe }}
+  {% if field.errors %}
+    <ul class=errors>
+    {% for error in field.errors %}
+      <li>{{ error }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+  </dd>
+{% endmacro %}
+
+
 {% block content %}
     <h1>Nowe zamówienie</h1>
+<form method=post>
+  <dl>
+    {{ render_field(form.name) }}
+    {{ render_field(form.description) }}
+    {{ render_field(form.client_id) }}
+  </dl>
+  <p><input type=submit value=Register>
+</form>
 
 {% endblock %}
