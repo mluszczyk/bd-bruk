@@ -6,9 +6,6 @@ import model
 
 @app.route("/")
 def home():
-    estimates_to_send = [
-        {'id': 123, 'name': 'Dom dla bezdomnych jeży'}
-    ]
     context = {
         'oczekujace_zamowienia': model.oczekujace_zamowienia(),
         'kosztorysy_do_zatwierdzenia': model.kosztorysy_do_zatwierdzenia(),
@@ -16,6 +13,11 @@ def home():
         'zlecenia_do_zatwierdzenia': model.zlecenia_do_zatwierdzenia()
     }
     return render_template('home.html', **context)
+
+
+@app.route('/nowe_zamowienie/')
+def new_order():
+    return render_template('new_order.html')
 
 
 if __name__ == "__main__":
