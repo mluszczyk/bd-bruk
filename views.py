@@ -1,4 +1,6 @@
 from flask import Flask, render_template, request, redirect
+import werkzeug.exceptions
+
 app = Flask(__name__)
 
 import model, forms
@@ -24,6 +26,14 @@ def new_order():
         return redirect('/')
     return render_template('new_order.html', form=form)
 
+
+@app.route('/zamowienie/<int:order_id>/')
+def order(order_id):
+    try:
+        details = model.get_order_details(order_id)
+    except model.NotFound:
+        raise werkzeug.exceptions.NotFound
+    return render_template('order.html', details=details)
 
 if __name__ == "__main__":
     app.debug = True

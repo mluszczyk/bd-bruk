@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Zamówienie #{{ details.id }} {{ details.nazwa }}</h1>
+
+<p>{{ details.opis }}</p>
+
+<h5>Zamawiający:</h5>
+<p>{{ details.nazwa_klienta }}, {{ details.telefon }}, {{ details.email }}</p>
+<p>{{ details.dane_do_faktury }}</p>
+
+{% endblock %}

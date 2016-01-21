@@ -33,7 +33,7 @@
                 <h5>Oczekujące zamówienia</h5>
                 <ul>
                     {% for item in oczekujace_zamowienia %}
-                        <li>#{{ item.id }} {{ item.nazwa }}</li>
+                        <li><a href="/zamowienie/{{ item.id }}/">#{{ item.id }} {{ item.nazwa }}</a></li>
                     {% else %}
                         <li>Brak</li>
                     {% endfor %}

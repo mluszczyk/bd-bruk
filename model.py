@@ -4,10 +4,14 @@ import psycopg2.extras
 connection = psycopg2.connect("dbname=michal")
 
 
-def select_wrapper(query_string):
+class NotFound(Exception):
+    pass
+
+
+def select_wrapper(query_string, data=None):
     def f():
         with connection.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-            cur.execute(query_string)
+            cur.execute(query_string, data)
             yield from cur
     return f
 
@@ -55,3 +59,19 @@ def save_order(name, description, client_id):
             VALUES (%s, %s, %s, now())
         """, (name, description, client_id))
     connection.commit()
+
+
+def get_order_details(order_id):
+    results = list(select_wrapper("""
+        SELECT zamowienie.id AS id, zamowienie.nazwa AS nazwa, opis,
+        klient.id AS klient_id, klient.nazwa AS nazwa_klienta, dane_do_faktury,
+        email, telefon
+        FROM zamowienie LEFT JOIN klient ON (klient.id = klient_id)
+        WHERE zamowienie.id = %s
+        LIMIT 1
+    """, (order_id,))())
+    if not results:
+        raise NotFound
+    else:
+        return results[0]
+
