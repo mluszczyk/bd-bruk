@@ -38,12 +38,18 @@ body {
                 <button class="btn btn-default">Przyjmij zamówienie</button>
 
                 <p>Otwarte sprawy:</p>
-                <h5>Zlecenia do zatwierdzenia</h5>
                 <h5>Kosztorysy do zatwierdzenia</h5>
-                <h5>Kosztorysy gotowe do wysłania</h5>
                 <ul>
-                    {% for item in estimates_to_send %}
-                        <li>#{{ item.id }} {{ item.name }}</li>
+                    {% for item in kosztorysy_do_zatwierdzenia %}
+                        <li>#{{ item.id }} {{ item.nazwa }}</li>
+                    {% else %}
+                        <li>Brak</li>
+                    {% endfor %}
+                </ul>
+                <h5>Zlecenia do zatwierdzenia</h5>
+                <ul>
+                    {% for item in zlecenia_do_zatwierdzenia %}
+                        <li>#{{ item.id }} {{ item.nazwa }}</li>
                     {% else %}
                         <li>Brak</li>
                     {% endfor %}
@@ -54,8 +60,23 @@ body {
             <div class="col-md-6">
                 <h4>Inspektor d/s rzeczoznawców</h4>
 
-                <h5>Zlecone kosztorysy</h5>
                 <h5>Oczekujące zamówienia</h5>
+                <ul>
+                    {% for item in oczekujace_zamowienia %}
+                        <li>#{{ item.id }} {{ item.nazwa }}</li>
+                    {% else %}
+                        <li>Brak</li>
+                    {% endfor %}
+                </ul>
+                <h5>Zlecone kosztorysy</h5>
+                <ul>
+                    {% for item in zlecone_kosztorysy %}
+                        <li>#{{ item.id }} {{ item.nazwa }}</li>
+                    {% else %}
+                        <li>Brak</li>
+                    {% endfor %}
+                </ul>
+
             </div>
         </div>
     </div>
