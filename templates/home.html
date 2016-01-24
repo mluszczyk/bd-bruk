@@ -41,7 +41,7 @@
                 <h5>Zlecone kosztorysy</h5>
                 <ul>
                     {% for item in zlecone_kosztorysy %}
-                        <li>#{{ item.id }} {{ item.nazwa }}</li>
+                        <li><a href="/zamowienie/{{ item.id }}/">#{{ item.id }} {{ item.nazwa }}</a></li>
                     {% else %}
                         <li>Brak</li>
                     {% endfor %}

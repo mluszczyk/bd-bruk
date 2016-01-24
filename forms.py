@@ -12,3 +12,13 @@ class NewOrderForm(Form):
         form = cls(request)
         form.client_id.choices = user_list
         return form
+
+
+class EstimateOrderForm(Form):
+    expert = SelectField("rzeczoznawca", coerce=int)
+
+    @classmethod
+    def feed_with_experts(cls, request, expert_list):
+        form = cls(request)
+        form.expert.choices = expert_list
+        return form

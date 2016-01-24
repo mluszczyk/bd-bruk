@@ -33,7 +33,31 @@ def order(order_id):
         details = model.get_order_details(order_id)
     except model.NotFound:
         raise werkzeug.exceptions.NotFound
-    return render_template('order.html', details=details)
+    try:
+        estimate_order = model.get_estimate_order(order_id)
+    except model.NotFound:
+        estimate_order = None
+    return render_template('order.html', details=details,
+                           estimate_order=estimate_order)
+
+
+@app.route('/zamow_kosztorys/<int:order_id>/', methods=['GET', 'POST'])
+def order_estimate(order_id):
+    expert_list = [(expert['id'], expert['nazwa']) for expert in model.experts()]
+    estimate_order_form = forms.EstimateOrderForm.feed_with_experts(request.form, expert_list)
+    if request.method == 'POST' and estimate_order_form.validate():
+        try:
+            model.create_estimate_order(order_id, estimate_order_form.expert.data)
+        except model.DatabaseError:
+            raise werkzeug.exceptions.Forbidden("Zlecenie wykonania kosztorysu już istnieje!")
+        else:
+            return redirect('/')
+
+
+    return render_template('estimate_order.html', order_id=order_id,
+                           estimate_order_form=estimate_order_form)
+
+
 
 if __name__ == "__main__":
     app.debug = True

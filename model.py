@@ -2,9 +2,22 @@ import psycopg2
 import psycopg2.extras
 
 connection = psycopg2.connect("dbname=michal")
+connection.autocommit = True
 
 
 class NotFound(Exception):
+    pass
+
+
+class DatabaseError(Exception):
+    def __init__(self, original_exception):
+        self.original_exception = original_exception
+
+    def __str__(self):
+        return str(self.original_exception)
+
+
+class IntegrityError(DatabaseError):
     pass
 
 
@@ -51,6 +64,10 @@ users = select_wrapper("""
     SELECT id, nazwa FROM klient ORDER BY nazwa
 """)
 
+experts = select_wrapper("""
+    SELECT id, nazwa FROM rzeczoznawca ORDER BY nazwa
+""")
+
 
 def save_order(name, description, client_id):
     with connection.cursor() as cur:
@@ -59,6 +76,18 @@ def save_order(name, description, client_id):
             VALUES (%s, %s, %s, now())
         """, (name, description, client_id))
     connection.commit()
+
+
+def create_estimate_order(order_id, expert_id):
+    try:
+        with connection.cursor() as cur:
+            cur.execute("""
+                INSERT INTO zlecenie_kosztorysu (czas_zamowienia, rzeczoznawca_id, zamowienie_id)
+                VALUES (now(), %s, %s)
+            """, (expert_id, order_id))
+        connection.commit()
+    except psycopg2.IntegrityError as e:
+        raise IntegrityError(e)
 
 
 def get_order_details(order_id):
@@ -75,3 +104,14 @@ def get_order_details(order_id):
     else:
         return results[0]
 
+
+def get_estimate_order(order_id):
+    results = list(select_wrapper("""
+        SELECT czas_zamowienia, rzeczoznawca.nazwa as nazwa_rzeczoznawcy
+        FROM zlecenie_kosztorysu LEFT JOIN rzeczoznawca ON (rzeczoznawca_id = rzeczoznawca.id)
+        WHERE zamowienie_id = %s
+    """, (order_id,))())
+    if not results:
+        raise NotFound
+    else:
+        return results[0]

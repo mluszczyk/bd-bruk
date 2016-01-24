@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Rejestracja zlecenia wykonania kosztorysu</h1>
+<h5>Dla zamówienia #{{ order_id }}</h5>
+<p>Zostanie zarejestrowanie zlecenie wykonania kosztorysu z datą dzisiejszą.</p>
+
+<form method=post>
+  <dl>
+    {{ render_field(estimate_order_form.expert) }}
+  </dl>
+  <p><input type=submit value=Zapisz>
+</form>
+
+{% endblock content %}
