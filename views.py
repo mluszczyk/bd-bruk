@@ -37,12 +37,9 @@ def order(order_id):
         estimate_order = model.get_estimate_order(order_id)
     except model.NotFound:
         estimate_order = None
-    try:
-        estimate = model.get_estimate(order_id)
-    except model.NotFound:
-        estimate = None
+    jobs = model.get_jobs(order_id)
     return render_template('order.html', details=details,
-                           estimate_order=estimate_order, estimate=estimate)
+                           estimate_order=estimate_order, jobs=jobs)
 
 
 @app.route('/zamow_kosztorys/<int:order_id>/', methods=['GET', 'POST'])

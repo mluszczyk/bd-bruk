@@ -11,7 +11,7 @@
                 <h5>Kosztorysy do zatwierdzenia</h5>
                 <ul>
                     {% for item in kosztorysy_do_zatwierdzenia %}
-                        <li>#{{ item.id }} {{ item.nazwa }}</li>
+                        <li><a href="/zamowienie/{{ item.id }}/">#{{ item.id }} {{ item.nazwa }}</a></li>
                     {% else %}
                         <li>Brak</li>
                     {% endfor %}
