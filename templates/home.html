@@ -9,43 +9,18 @@
 
                 <p>Otwarte sprawy:</p>
                 <h5>Kosztorysy do zatwierdzenia</h5>
-                <ul>
-                    {% for item in kosztorysy_do_zatwierdzenia %}
-                        <li><a href="/zamowienie/{{ item.id }}/">#{{ item.id }} {{ item.nazwa }}</a></li>
-                    {% else %}
-                        <li>Brak</li>
-                    {% endfor %}
-                </ul>
+                {{ order_list(kosztorysy_do_zatwierdzenia) }}
                 <h5>Zlecenia do zatwierdzenia</h5>
-                <ul>
-                    {% for item in zlecenia_do_zatwierdzenia %}
-                        <li><a href="/zamowienie/{{ item.id }}/">#{{ item.id }} {{ item.nazwa }}</a></li>
-                    {% else %}
-                        <li>Brak</li>
-                    {% endfor %}
-                </ul>
-
+                {{ order_list(zlecenia_do_zatwierdzenia) }}
 
             </div>
             <div class="col-md-6">
                 <h4>Inspektor d/s rzeczoznawców</h4>
 
                 <h5>Oczekujące zamówienia</h5>
-                <ul>
-                    {% for item in oczekujace_zamowienia %}
-                        <li><a href="/zamowienie/{{ item.id }}/">#{{ item.id }} {{ item.nazwa }}</a></li>
-                    {% else %}
-                        <li>Brak</li>
-                    {% endfor %}
-                </ul>
+                {{ order_list(oczekujace_zamowienia) }}
                 <h5>Zlecone kosztorysy</h5>
-                <ul>
-                    {% for item in zlecone_kosztorysy %}
-                        <li><a href="/zamowienie/{{ item.id }}/">#{{ item.id }} {{ item.nazwa }}</a></li>
-                    {% else %}
-                        <li>Brak</li>
-                    {% endfor %}
-                </ul>
+                {{ order_list(zlecone_kosztorysy) }}
 
             </div>
 {% endblock %}

@@ -101,6 +101,12 @@ def accept_contract(order_id):
         return redirect('/')
 
 
+@app.route('/archwium_zamowien/')
+def order_archive():
+    orders = model.archived_orders()
+    return render_template('order_archive.html', orders=orders)
+
+
 if __name__ == "__main__":
     app.debug = True
     app.run()

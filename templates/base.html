@@ -11,6 +11,16 @@
   </dd>
 {% endmacro %}
 
+{% macro order_list(order_list) %}
+    <ul>
+        {% for item in order_list %}
+            <li><a href="/zamowienie/{{ item.id }}/">#{{ item.id }} {{ item.nazwa }}</a></li>
+        {% else %}
+            <li>Brak</li>
+        {% endfor %}
+    </ul>
+{% endmacro %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,12 +50,21 @@ body {
 
 </head>
 <body>
-    <div class="container">
-        <h3>
-          Bruk&Trawnik
-        </h3>
-        {% block content %}{% endblock %}
+<div class="container">
+    <nav class="navbar navbar-inverse nabar-fixed-top">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="{{ url_for('home') }}">Bruk&Trawnik</a>
+            <ul class="nav navbar-nav">
+
+                <li><a href="{{ url_for('order_archive') }}">Archwium zamówień</a>
+                </li>
+            </ul>
         </div>
-    </div>
+    </nav>
+</div>
+<div class="container">
+    {% block content %}{% endblock %}
+</div>
+</div>
 </body>
 </html>

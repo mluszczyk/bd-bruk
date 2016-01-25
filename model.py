@@ -68,6 +68,12 @@ experts = select_wrapper("""
     SELECT id, nazwa FROM rzeczoznawca ORDER BY nazwa
 """)
 
+archived_orders = select_wrapper("""
+    SELECT zamowienie.id AS id, nazwa FROM zamowienie
+    INNER JOIN zlecenie ON (zamowienie.id = zamowienie_id)
+    WHERE zaakceptowane_przez_klienta = true
+""")
+
 
 def save_order(name, description, client_id):
     with connection.cursor() as cur:
