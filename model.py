@@ -137,7 +137,8 @@ def get_order_details(order_id):
         SELECT zamowienie.id AS id, zamowienie.nazwa AS nazwa, opis,
         klient.id AS klient_id, klient.nazwa AS nazwa_klienta, dane_do_faktury,
         email, telefon, kosztorys_id, czas_sporzadzenia as czas_sporzadzenia_kosztorysu,
-        zlecenie.id as zlecenie_id
+        zlecenie.id as zlecenie_id,
+        zaakceptowane_przez_klienta
         FROM zamowienie LEFT JOIN klient ON (klient.id = klient_id)
         LEFT JOIN kosztorys ON (kosztorys.id = kosztorys_id)
         LEFT JOIN zlecenie ON (zamowienie.id = zlecenie.zamowienie_id)

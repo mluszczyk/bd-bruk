@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, url_for
 import werkzeug.exceptions
 
 app = Flask(__name__)
@@ -84,9 +84,9 @@ def accept_jobs(order_id):
         data = jobs_form.get_safe_data()
         try:
             model.save_job_acceptance(order_id, data)
-        except model.DatabaseError:
-            raise werkzeug.exceptions.Forbidden
-        return "data"
+        except model.DatabaseError as e:
+            raise werkzeug.exceptions.Forbidden from e
+        return redirect(url_for('order', order_id=order_id))
     return render_template("jobs_form.html", jobs_form=jobs_form, order_id=order_id,
                            jobs=jobs)
 
