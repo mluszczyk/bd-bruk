@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Nowy klient</h1>
+<form method=post>
+  <dl>
+    {{ render_field(form.name) }}
+    {{ render_field(form.phone) }}
+    {{ render_field(form.email) }}
+    {{ render_field(form.address_data) }}
+  </dl>
+  <p><input type=submit value=Zapisz>
+</form>
+
+{% endblock %}

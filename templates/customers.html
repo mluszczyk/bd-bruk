@@ -3,6 +3,8 @@
 {% block content %}
 <h1>Klienci</h1>
 
+<p><a href="{{ url_for('new_customer') }}" class="btn btn-default">Nowy klient</a></p>
+
 {% for customer in customers %}
     <h5>{{ customer.nazwa }}</h5>
     <p>{{ customer.email }}, {{customer.telefon }}</p>

@@ -225,3 +225,14 @@ def accept_contract(order_id):
             """, (order_id, ))
     except psycopg2.DatabaseError as e:
         raise DatabaseError from e
+
+
+def save_customer(name, email, phone, address_data):
+    try:
+        with connection.cursor() as cur:
+            cur.execute("""
+                INSERT INTO klient (nazwa, email, telefon, dane_do_faktury)
+                VALUES (%s, %s, %s, %s)
+            """, (name, email, phone, address_data))
+    except psycopg2.DatabaseError as e:
+        raise DatabaseError from e

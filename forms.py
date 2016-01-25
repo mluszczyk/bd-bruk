@@ -68,3 +68,10 @@ def job_acceptance_form_factory(related_jobs):
             ]
 
     return JobAcceptanceForm
+
+
+class NewCustomer(wtforms.Form):
+    name = wtforms.StringField('nazwa', validators=[wtforms.validators.Length(min=4, max=250)])
+    phone = wtforms.StringField('telefon', validators=[wtforms.validators.Length(min=4, max=50)])
+    email = wtforms.StringField('email', validators=[wtforms.validators.Length(min=4, max=250)])
+    address_data = wtforms.TextAreaField('dane_do_faktury')

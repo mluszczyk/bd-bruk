@@ -4,9 +4,11 @@
     <h1>Nowe zamówienie</h1>
 <form method=post>
   <dl>
+    {{ render_field(form.client_id) }}
+    <p><i>Klient nie znajduje się w bazie? Można dodać go <a href="{{ url_for('new_customer') }}">tutaj</a>,
+    a potem otworzyć ten widok ponownie.</i></p>
     {{ render_field(form.name) }}
     {{ render_field(form.description) }}
-    {{ render_field(form.client_id) }}
   </dl>
   <p><input type=submit value=Zapisz>
 </form>

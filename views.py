@@ -113,6 +113,20 @@ def customers():
     return render_template('customers.html', customers=customers)
 
 
+@app.route('/nowy_klient/', methods=['POST', 'GET'])
+def new_customer():
+    form = forms.NewCustomer(request.form)
+    if request.method == 'POST' and form.validate():
+        try:
+            model.save_customer(form.name.data, form.email.data,
+                                form.phone.data, form.address_data.data)
+        except model.DatabaseError as e:
+            raise werkzeug.exceptions.Forbidden from e
+        else:
+            return redirect(url_for('home'))
+    return render_template('new_customer.html', form=form)
+
+
 if __name__ == "__main__":
     app.debug = True
     app.run()
