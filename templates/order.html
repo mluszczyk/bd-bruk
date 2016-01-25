@@ -54,6 +54,13 @@
               {% endfor %}
             </tbody>
         </table>
+        {% if details.zaakceptowane_przez_klienta %}
+            <p>Zaakceptowane przez klienta. Zamówienie znajduje się w archwium.</p>
+        {% else %}
+            <p><a href="{{ url_for('accept_contract', order_id=details.id) }}" class="btn btn-default">
+                Wprowadź akceptację klienta i przenieś do archwium
+            </a></p>
+        {% endif %}
     {% endif %}
 {% endif %}
 

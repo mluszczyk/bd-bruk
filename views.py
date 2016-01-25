@@ -91,6 +91,16 @@ def accept_jobs(order_id):
                            jobs=jobs)
 
 
+@app.route('/akceptuj_zlecenie/<int:order_id>/')
+def accept_contract(order_id):
+    try:
+        model.accept_contract(order_id)
+    except model.DatabaseError as e:
+        raise werkzeug.exceptions.NotFound from e
+    else:
+        return redirect('/')
+
+
 if __name__ == "__main__":
     app.debug = True
     app.run()

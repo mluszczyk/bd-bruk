@@ -10,11 +10,11 @@ class NotFound(Exception):
 
 
 class DatabaseError(Exception):
-    def __init__(self, original_exception):
+    def __init__(self, original_exception=None):
         self.original_exception = original_exception
 
     def __str__(self):
-        return str(self.original_exception)
+        return str(self.original_exception) if self.original_exception is not None else "Database error"
 
 
 class IntegrityError(DatabaseError):
@@ -200,3 +200,15 @@ def save_job_acceptance(order_id, jobs):
         raise
     finally:
         connection.autocommit = True
+
+
+def accept_contract(order_id):
+    try:
+        with connection.cursor() as cur:
+            cur.execute("""
+                UPDATE zlecenie
+                SET zaakceptowane_przez_klienta = true
+                WHERE id = (SELECT id FROM zlecenie WHERE zamowienie_id = %s)
+            """, (order_id, ))
+    except psycopg2.DatabaseError as e:
+        raise DatabaseError from e
