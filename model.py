@@ -29,7 +29,7 @@ def select_wrapper(query_string, data=None):
     return f
 
 
-# zamówienia, do których należy znaleźć bądź stworzyć kosztorys
+# zamówienia, dla których należy znaleźć bądź zamówić kosztorys
 oczekujace_zamowienia = select_wrapper("""
     SELECT id, nazwa FROM zamowienie
     WHERE kosztorys_id IS NULL AND NOT EXISTS (
@@ -90,6 +90,48 @@ def create_estimate_order(order_id, expert_id):
         raise IntegrityError(e)
 
 
+def save_estimate(order_id, jobs):
+    try:
+        connection.autocommit = False
+        with connection.cursor() as cur:
+            cur.execute("""
+                SELECT id FROM zlecenie_kosztorysu
+                WHERE zamowienie_id = %s
+            """, (order_id,))
+            estimate_order_id = cur.fetchone()[0]
+
+            cur.execute("""
+                INSERT INTO kosztorys (czas_sporzadzenia, zlecenie_kosztorysu_id)
+                VALUES (now(), %s)
+                RETURNING id
+            """, (estimate_order_id,))
+
+            estimate_id = cur.fetchone()[0]
+
+            for job in jobs:
+                cur.execute("""
+                    INSERT INTO praca (opis, koszt, kosztorys_id)
+                    VALUES (%s, %s, %s)
+                """, (job['description'], job['cost'], estimate_id))
+
+            cur.execute("""
+                UPDATE zamowienie SET kosztorys_id = %s
+                WHERE id = %s
+            """, (estimate_id, order_id))
+        connection.commit()
+
+    except psycopg2.Error as e:
+        connection.rollback()
+        raise DatabaseError(e)
+
+    except:
+        connection.rollback()
+        raise
+
+    finally:
+        connection.autocommit = True
+
+
 def get_order_details(order_id):
     results = list(select_wrapper("""
         SELECT zamowienie.id AS id, zamowienie.nazwa AS nazwa, opis,
@@ -119,7 +161,3 @@ def get_estimate_order(order_id):
 
 def get_estimate(order_id):
     return None
-
-
-def save_estimate(order_id, jobs):
-    pass

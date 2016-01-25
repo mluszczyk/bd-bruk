@@ -65,7 +65,12 @@ def order_estimate(order_id):
 def new_estimate(order_id):
     estimate_form = forms.NewEstimateForm(request.form)
     if request.method == 'POST' and estimate_form.validate():
-        return "Should save"
+        try:
+            model.save_estimate(order_id, jobs=estimate_form.jobs.data)
+        except model.DatabaseError:
+            raise werkzeug.exceptions.Forbidden()
+        else:
+            return redirect('/')
 
     return render_template('new_estimate.html', order_id=order_id, estimate_form=estimate_form)
 
