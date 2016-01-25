@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Nowy kosztorys</h1>
+<h5>Dla zamówienia #{{ order_id }}</h5>
+<form method=post>
+    <div class="form-group input-group">
+      {% for job in estimate_form.jobs %}
+        <div class="row">
+          {% for field in job %}
+            <div class="col-sm-6">
+              <dt>{{ field.label }}
+              <dd>{{ field()|safe }}
+              {% if field.errors %}
+                <ul class=errors>
+                {% for error in field.errors %}
+                  <li>{{ error }}</li>
+                {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+  <p><input type=submit value=Zapisz>
+</form>
+
+{% endblock %}

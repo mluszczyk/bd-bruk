@@ -115,3 +115,11 @@ def get_estimate_order(order_id):
         raise NotFound
     else:
         return results[0]
+
+
+def get_estimate(order_id):
+    return None
+
+
+def save_estimate(order_id, jobs):
+    pass

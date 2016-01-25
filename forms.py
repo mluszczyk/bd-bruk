@@ -1,10 +1,10 @@
-from wtforms import Form, StringField, SelectField, TextAreaField, validators
+import wtforms
 
 
-class NewOrderForm(Form):
-    name = StringField("nazwa", [validators.Length(min=4, max=250)])
-    description = TextAreaField("opis", [validators.Length(min=4)])
-    client_id = SelectField("klient", coerce=int)
+class NewOrderForm(wtforms.Form):
+    name = wtforms.StringField("nazwa", [wtforms.validators.Length(min=4, max=250)])
+    description = wtforms.TextAreaField("opis", [wtforms.validators.Length(min=4)])
+    client_id = wtforms.SelectField("klient", coerce=int)
 
     @classmethod
     def feed_with_users(cls, request, user_list):
@@ -14,11 +14,20 @@ class NewOrderForm(Form):
         return form
 
 
-class EstimateOrderForm(Form):
-    expert = SelectField("rzeczoznawca", coerce=int)
+class EstimateOrderForm(wtforms.Form):
+    expert = wtforms.SelectField("rzeczoznawca", coerce=int)
 
     @classmethod
     def feed_with_experts(cls, request, expert_list):
         form = cls(request)
         form.expert.choices = expert_list
         return form
+
+
+class NewJobForm(wtforms.Form):
+    description = wtforms.TextAreaField("opis", [wtforms.validators.Length(min=4)])
+    cost = wtforms.FloatField("koszt", [wtforms.validators.NumberRange(min=0)])
+
+
+class NewEstimateForm(wtforms.Form):
+    jobs = wtforms.FieldList(wtforms.FormField(NewJobForm), min_entries=2)

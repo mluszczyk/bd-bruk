@@ -37,8 +37,12 @@ def order(order_id):
         estimate_order = model.get_estimate_order(order_id)
     except model.NotFound:
         estimate_order = None
+    try:
+        estimate = model.get_estimate(order_id)
+    except model.NotFound:
+        estimate = None
     return render_template('order.html', details=details,
-                           estimate_order=estimate_order)
+                           estimate_order=estimate_order, estimate=estimate)
 
 
 @app.route('/zamow_kosztorys/<int:order_id>/', methods=['GET', 'POST'])
@@ -53,10 +57,17 @@ def order_estimate(order_id):
         else:
             return redirect('/')
 
-
     return render_template('estimate_order.html', order_id=order_id,
                            estimate_order_form=estimate_order_form)
 
+
+@app.route('/nowy_kosztorys/<int:order_id>/', methods=['POST', 'GET'])
+def new_estimate(order_id):
+    estimate_form = forms.NewEstimateForm(request.form)
+    if request.method == 'POST' and estimate_form.validate():
+        return "Should save"
+
+    return render_template('new_estimate.html', order_id=order_id, estimate_form=estimate_form)
 
 
 if __name__ == "__main__":

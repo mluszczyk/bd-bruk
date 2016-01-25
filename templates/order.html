@@ -16,8 +16,14 @@
     Zarejestruj zamówienie kosztorysu
 </a></p>
 {% else %}
-<p>Kosztorys został zamówiony {{ estimate_order.czas_zamowienia }} u rzeczoznawcy
-    {{ estimate_order.nazwa_rzeczoznawcy }}.</p>
+    <p>Kosztorys został zamówiony {{ estimate_order.czas_zamowienia }} u rzeczoznawcy
+        {{ estimate_order.nazwa_rzeczoznawcy }}.</p>
+
+    {% if estimate is none %}
+        <p><a href="{{ url_for('new_estimate', order_id=details.id) }}" class="btn btn-default">
+            Zapisz kosztorys
+        </a></p>
+    {% endif %}
 {% endif %}
 
 
