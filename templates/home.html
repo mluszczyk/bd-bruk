@@ -19,7 +19,7 @@
                 <h5>Zlecenia do zatwierdzenia</h5>
                 <ul>
                     {% for item in zlecenia_do_zatwierdzenia %}
-                        <li>#{{ item.id }} {{ item.nazwa }}</li>
+                        <li><a href="/zamowienie/{{ item.id }}/">#{{ item.id }} {{ item.nazwa }}</a></li>
                     {% else %}
                         <li>Brak</li>
                     {% endfor %}

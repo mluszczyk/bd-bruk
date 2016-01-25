@@ -136,9 +136,11 @@ def get_order_details(order_id):
     results = list(select_wrapper("""
         SELECT zamowienie.id AS id, zamowienie.nazwa AS nazwa, opis,
         klient.id AS klient_id, klient.nazwa AS nazwa_klienta, dane_do_faktury,
-        email, telefon, kosztorys_id, czas_sporzadzenia as czas_sporzadzenia_kosztorysu
+        email, telefon, kosztorys_id, czas_sporzadzenia as czas_sporzadzenia_kosztorysu,
+        zlecenie.id as zlecenie_id
         FROM zamowienie LEFT JOIN klient ON (klient.id = klient_id)
         LEFT JOIN kosztorys ON (kosztorys.id = kosztorys_id)
+        LEFT JOIN zlecenie ON (zamowienie.id = zlecenie.zamowienie_id)
         WHERE zamowienie.id = %s
         LIMIT 1
     """, (order_id,))())
@@ -162,9 +164,11 @@ def get_estimate_order(order_id):
 
 def get_jobs(order_id):
     results = list(select_wrapper("""
-        SELECT praca.id AS id, praca.opis, koszt
+        SELECT praca.id AS id, praca.opis, koszt, zaakceptowane
         FROM zamowienie
         LEFT JOIN praca ON (zamowienie.kosztorys_id = praca.kosztorys_id)
+        LEFT JOIN zlecenie ON (zlecenie.zamowienie_id = zamowienie.id)
+        LEFT JOIN akceptacja_pracy ON (praca_id = praca.id AND zlecenie_id = zlecenie.id)
         WHERE zamowienie.id = %s
     """, (order_id, ))())
     return results

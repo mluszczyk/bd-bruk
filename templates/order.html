@@ -25,19 +25,31 @@
         </a></p>
     {% else %}
         <p>Kosztorys sporządzony {{ details.czas_sporzadzenia_kosztorysu }}.</p>
-        <p><a href="{{ url_for('accept_jobs', order_id=details.id) }}" class="btn btn-default">
-            Wprowadź akceptację prac przez klienta
-        </a></p>
+        {% if details.zlecenie_id is none %}
+            <p><a href="{{ url_for('accept_jobs', order_id=details.id) }}" class="btn btn-default">
+                Wprowadź akceptację prac przez klienta
+            </a></p>
+        {% endif %}
         <table>
             <thead>
-            <tr><th>Opis pracy</th>
-            <th>Koszt</th></tr>
+            <tr>
+                <th>Opis pracy</th>
+                <th>Koszt</th>
+                <th>Zaakceptowane</th>
+            </tr>
             </thead>
             <tbody>
               {% for job in jobs %}
                 <tr>
                     <td>{{ job.opis }}</td>
                     <td>{{ job.koszt }}</td>
+                    <td>
+                        {% if job.zaakceptowane is none %}
+                            -
+                        {% else %}
+                            {% if job.zaakceptowane %}tak{% else %}nie{% endif %}
+                        {% endif %}
+                    </td>
                 </tr>
               {% endfor %}
             </tbody>
