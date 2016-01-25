@@ -107,6 +107,12 @@ def order_archive():
     return render_template('order_archive.html', orders=orders)
 
 
+@app.route('/klienci/')
+def customers():
+    customers = model.customers()
+    return render_template('customers.html', customers=customers)
+
+
 if __name__ == "__main__":
     app.debug = True
     app.run()

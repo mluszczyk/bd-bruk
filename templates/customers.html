@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Klienci</h1>
+
+{% for customer in customers %}
+    <h5>{{ customer.nazwa }}</h5>
+    <p>{{ customer.email }}, {{customer.telefon }}</p>
+    <p>{{ customer.dane_do_faktury }}</p>
+{% else %}
+    <p>Brak wpisanych klientów</p>
+{% endfor %}
+{% endblock %}

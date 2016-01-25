@@ -74,6 +74,12 @@ archived_orders = select_wrapper("""
     WHERE zaakceptowane_przez_klienta = true
 """)
 
+customers = select_wrapper("""
+    SELECT nazwa, dane_do_faktury, email, telefon
+    FROM klient
+    ORDER BY nazwa
+""")
+
 
 def save_order(name, description, client_id):
     with connection.cursor() as cur:
