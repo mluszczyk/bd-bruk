@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Akceptacja prac</h1>
+<h5>Dla zamówienia #{{ order_id }}</h5>
+<form method=post>
+  <table>
+    <thead>
+    <tr><th>Opis</th><th>Koszt</th><th>Akceptacja</th></tr>
+    </thead>
+    <tbody>
+    {% for job in jobs %}
+    <tr>
+      <td>{{ job.opis }}</td>
+      <td>{{ job.koszt }}</td>
+      <td>
+        {% with form = jobs_form.get_form(job.id) %}
+          {{ form.job_id() }}
+          {{ form.accepted() }}
+        {% endwith %}
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <p><input type=submit value="Zapisz i stwórz zamówienie">
+</form>
+
+{% endblock %}

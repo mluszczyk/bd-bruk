@@ -25,6 +25,9 @@
         </a></p>
     {% else %}
         <p>Kosztorys sporządzony {{ details.czas_sporzadzenia_kosztorysu }}.</p>
+        <p><a href="{{ url_for('accept_jobs', order_id=details.id) }}" class="btn btn-default">
+            Wprowadź akceptację prac przez klienta
+        </a></p>
         <table>
             <thead>
             <tr><th>Opis pracy</th>

@@ -31,3 +31,26 @@ class NewJobForm(wtforms.Form):
 
 class NewEstimateForm(wtforms.Form):
     jobs = wtforms.FieldList(wtforms.FormField(NewJobForm), min_entries=2)
+
+
+class SingleJobAcceptanceForm(wtforms.Form):
+    job_id = wtforms.HiddenField("job_id")
+    accepted = wtforms.BooleanField("accepted")
+
+
+def job_acceptance_form_factory(jobs):
+    default = [{'job_id': job['id']} for job in jobs]
+
+    class JobAcceptanceForm(wtforms.Form):
+        jobs = wtforms.FieldList(
+            wtforms.FormField(SingleJobAcceptanceForm),
+            default=default,
+            min_entries=len(default),
+            max_entries=len(default)
+        )
+
+        def get_form(self, job_id):
+            for form in self.jobs:
+                return form
+
+    return JobAcceptanceForm

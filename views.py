@@ -72,6 +72,20 @@ def new_estimate(order_id):
     return render_template('new_estimate.html', order_id=order_id, estimate_form=estimate_form)
 
 
+@app.route('/akceptuj_prace/<int:order_id>/', methods=['POST', 'GET'])
+def accept_jobs(order_id):
+    try:
+        jobs = model.get_jobs(order_id)
+    except model.NotFound:
+        raise werkzeug.exceptions.NotFound
+
+    jobs_form = forms.job_acceptance_form_factory(jobs)(request.form)
+    if request.method == 'POST' and jobs_form.validate():
+        return "Not implemented"
+    return render_template("jobs_form.html", jobs_form=jobs_form, order_id=order_id,
+                           jobs=jobs)
+
+
 if __name__ == "__main__":
     app.debug = True
     app.run()
