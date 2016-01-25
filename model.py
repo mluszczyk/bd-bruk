@@ -168,3 +168,31 @@ def get_jobs(order_id):
         WHERE zamowienie.id = %s
     """, (order_id, ))())
     return results
+
+
+def save_job_acceptance(order_id, jobs):
+    connection.autocommit = False
+    try:
+        with connection.cursor() as cur:
+            cur.execute("""
+                INSERT INTO zlecenie (zaakceptowane_przez_klienta, zamowienie_id)
+                VALUES (%s, %s)
+                RETURNING id
+            """, (False, order_id))
+
+            contract_id = cur.fetchone()[0]
+
+            for job in jobs:
+                cur.execute("""
+                    INSERT INTO akceptacja_pracy (zaakceptowane, praca_id, zlecenie_id)
+                    VALUES (%s, %s, %s)
+                """, (job['accepted'], job['id'], contract_id))
+        connection.commit()
+    except psycopg2.IntegrityError as e:
+        connection.rollback()
+        raise IntegrityError(e)
+    except:
+        connection.rollback()
+        raise
+    finally:
+        connection.autocommit = True

@@ -34,12 +34,12 @@ class NewEstimateForm(wtforms.Form):
 
 
 class SingleJobAcceptanceForm(wtforms.Form):
-    job_id = wtforms.HiddenField("job_id")
+    job_id = field1 = wtforms.IntegerField("job_id", widget=wtforms.widgets.HiddenInput())
     accepted = wtforms.BooleanField("accepted")
 
 
-def job_acceptance_form_factory(jobs):
-    default = [{'job_id': job['id']} for job in jobs]
+def job_acceptance_form_factory(related_jobs):
+    default = [{'job_id': job['id']} for job in related_jobs]
 
     class JobAcceptanceForm(wtforms.Form):
         jobs = wtforms.FieldList(
@@ -50,7 +50,21 @@ def job_acceptance_form_factory(jobs):
         )
 
         def get_form(self, job_id):
+            """Return form related to given job_id or any form if not found."""
             for form in self.jobs:
-                return form
+                if form.job_id.data == job_id:
+                    return form
+            return next(iter(self.jobs))
+
+        def get_safe_data(self):
+            """Return data after making sure that only indices from related_jobs are used."""
+            filled_data = {
+                form.job_id.data: form.accepted.data
+                for form in self.jobs
+            }
+            return [
+                {'id': job['id'], 'accepted': filled_data.get(job['id'], False)}
+                for job in related_jobs
+            ]
 
     return JobAcceptanceForm

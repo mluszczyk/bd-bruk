@@ -81,7 +81,12 @@ def accept_jobs(order_id):
 
     jobs_form = forms.job_acceptance_form_factory(jobs)(request.form)
     if request.method == 'POST' and jobs_form.validate():
-        return "Not implemented"
+        data = jobs_form.get_safe_data()
+        try:
+            model.save_job_acceptance(order_id, data)
+        except model.DatabaseError:
+            raise werkzeug.exceptions.Forbidden
+        return "data"
     return render_template("jobs_form.html", jobs_form=jobs_form, order_id=order_id,
                            jobs=jobs)
 
