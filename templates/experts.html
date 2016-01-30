@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Rzeczoznawcy</h1>
+
+<p><a href="{{ url_for('new_expert') }}" class="btn btn-default">Nowy rzeczoznawca</a></p>
+
+{% for expert in experts %}
+    <h5>{{ expert.nazwa }}</h5>
+    <p>{{ expert.email }}</p>
+{% else %}
+    <p>Brak rzeczoznawców</p>
+{% endfor %}
+{% endblock %}

@@ -75,3 +75,8 @@ class NewCustomer(wtforms.Form):
     phone = wtforms.StringField('telefon', validators=[wtforms.validators.Length(min=4, max=50)])
     email = wtforms.StringField('email', validators=[wtforms.validators.Length(min=4, max=250)])
     address_data = wtforms.TextAreaField('dane_do_faktury')
+
+
+class NewExpert(wtforms.Form):
+    name = wtforms.StringField('nazwa', validators=[wtforms.validators.Length(min=4, max=250)])
+    email = wtforms.StringField('email', validators=[wtforms.validators.Length(min=4, max=250)])

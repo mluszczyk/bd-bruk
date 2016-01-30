@@ -126,6 +126,24 @@ def new_customer():
             return redirect(url_for('home'))
     return render_template('new_customer.html', form=form)
 
+@app.route('/rzeczoznawcy/')
+def experts():
+    experts = model.experts()
+    return render_template('experts.html', experts=experts)
+
+
+@app.route('/nowy_rzeczoznawca/', methods=['POST', 'GET'])
+def new_expert():
+    form = forms.NewExpert(request.form)
+    if request.method == 'POST' and form.validate():
+        try:
+            model.save_expert(form.name.data, form.email.data)
+        except model.DatabaseError as e:
+            raise werkzeug.exceptions.Forbidden from e
+        else:
+            return redirect(url_for('home'))
+    return render_template('new_expert.html', form=form)
+
 
 if __name__ == "__main__":
     app.debug = True

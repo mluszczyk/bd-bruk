@@ -29,6 +29,16 @@ def select_wrapper(query_string, data=None):
     return f
 
 
+def execute_insert(sql_string, data):
+    try:
+        with connection.cursor() as cur:
+            cur.execute(sql_string, data)
+    except psycopg2.IntegrityError as e:
+        raise IntegrityError(e)
+    except psycopg2.DatabaseError as e:
+        raise DatabaseError from e
+
+
 # zamówienia, dla których należy znaleźć bądź zamówić kosztorys
 oczekujace_zamowienia = select_wrapper("""
     SELECT id, nazwa FROM zamowienie
@@ -65,13 +75,14 @@ users = select_wrapper("""
 """)
 
 experts = select_wrapper("""
-    SELECT id, nazwa FROM rzeczoznawca ORDER BY nazwa
+    SELECT id, nazwa, email FROM rzeczoznawca ORDER BY nazwa
 """)
 
 archived_orders = select_wrapper("""
     SELECT zamowienie.id AS id, nazwa FROM zamowienie
     INNER JOIN zlecenie ON (zamowienie.id = zamowienie_id)
     WHERE zaakceptowane_przez_klienta = true
+    ORDER BY id
 """)
 
 customers = select_wrapper("""
@@ -82,12 +93,10 @@ customers = select_wrapper("""
 
 
 def save_order(name, description, client_id):
-    with connection.cursor() as cur:
-        cur.execute("""
-            INSERT INTO zamowienie (nazwa, opis, klient_id, czas_zlozenia)
-            VALUES (%s, %s, %s, now())
-        """, (name, description, client_id))
-    connection.commit()
+    execute_insert("""
+        INSERT INTO zamowienie (nazwa, opis, klient_id, czas_zlozenia)
+        VALUES (%s, %s, %s, now())
+    """, (name, description, client_id))
 
 
 def create_estimate_order(order_id, expert_id):
@@ -228,11 +237,13 @@ def accept_contract(order_id):
 
 
 def save_customer(name, email, phone, address_data):
-    try:
-        with connection.cursor() as cur:
-            cur.execute("""
-                INSERT INTO klient (nazwa, email, telefon, dane_do_faktury)
-                VALUES (%s, %s, %s, %s)
-            """, (name, email, phone, address_data))
-    except psycopg2.DatabaseError as e:
-        raise DatabaseError from e
+    execute_insert("""
+        INSERT INTO klient (nazwa, email, telefon, dane_do_faktury)
+        VALUES (%s, %s, %s, %s)
+    """, (name, email, phone, address_data))
+
+
+def save_expert(name, email):
+    execute_insert("""
+        INSERT INTO rzeczoznawca (nazwa, email) VALUES (%s, %s)
+    """, (name, email))

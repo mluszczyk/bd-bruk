@@ -8,6 +8,8 @@
 <form method=post>
   <dl>
     {{ render_field(estimate_order_form.expert) }}
+    <p><i>Rzeczoznawca nie znajduje się w bazie? Można dodać go <a href="{{ url_for('new_expert') }}">tutaj</a>,
+
   </dl>
   <p><input type=submit value=Zapisz>
 </form>

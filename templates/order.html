@@ -12,9 +12,11 @@
 <h5>Kosztorys</h5>
 {% if estimate_order is none %}
 <p>Nie zostało zarejestrowane zamówienie kosztorysu.</p>
-<p><a href="{{ url_for('order_estimate', order_id=details.id) }}" class="btn btn-default">
-    Zarejestruj zamówienie kosztorysu
-</a></p>
+<p>
+    <a href="{{ url_for('order_estimate', order_id=details.id) }}" class="btn btn-default">
+        Zarejestruj zamówienie kosztorysu
+    </a>
+</p>
 {% else %}
     <p>Kosztorys został zamówiony {{ estimate_order.czas_zamowienia }} u rzeczoznawcy
         {{ estimate_order.nazwa_rzeczoznawcy }}.</p>
