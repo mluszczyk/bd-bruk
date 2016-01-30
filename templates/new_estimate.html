@@ -4,7 +4,7 @@
     <h1>Nowy kosztorys</h1>
 <h5>Dla zamówienia #{{ order_id }}</h5>
 <form method=post>
-    <div class="form-group input-group">
+    <div class="form-group input-group" id="job-listing">
       {% for job in estimate_form.jobs %}
         <div class="row">
           {% for field in job %}
@@ -23,7 +23,58 @@
         </div>
       {% endfor %}
     </div>
-  <p><input type=submit value=Zapisz>
+  <p>
+    <button type="button" class="addrow btn btn-default btn-sm">Dodaj wiersz</button>
+    <button type="button" class="droprow btn btn-default btn-sm">Usuń ostatni wiersz</button>
+    <input type=submit value=Zapisz class="btn btn-primary btn-sm">
+  </p>
 </form>
+
+
+
+<script type="text/x-handlebars-template" id="job-row-template">
+  {% raw %}
+    <div class="row">
+
+        <div class="col-sm-6">
+          <dt><label for="jobs-{{num}}-description">opis</label>
+          <dd><textarea id="jobs-{{num}}-description" name="jobs-{{num}}-description"></textarea>
+
+        </div>
+
+        <div class="col-sm-6">
+          <dt><label for="jobs-{{num}}-cost">koszt</label>
+          <dd><input id="jobs-{{num}}-cost" name="jobs-{{num}}-cost" type="text" value="">
+
+        </div>
+
+    </div>
+  {% endraw %}
+</script>
+
+<script>
+function getHighestId() {
+  return $("#job-listing").children().length - 1;
+}
+
+function addRow() {
+  var source   = $("#job-row-template").html();
+  var template = Handlebars.compile(source);
+  var context = {num: getHighestId() + 1};
+  var html = template(context);
+  $("#job-listing").append(html);
+}
+
+function removeLastRow() {
+  $("#job-listing").children().last().remove();
+}
+
+$(function() {
+  $(".addrow").click(function() {addRow();});
+  $(".droprow").click(function() {removeLastRow();});
+});
+</script>
+
+
 
 {% endblock %}

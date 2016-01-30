@@ -43,7 +43,7 @@ class NewJobForm(wtforms.Form):
 
 
 class NewEstimateForm(wtforms.Form):
-    jobs = wtforms.FieldList(wtforms.FormField(NewJobForm), min_entries=2)
+    jobs = wtforms.FieldList(wtforms.FormField(NewJobForm), min_entries=1)
 
 
 class SingleJobAcceptanceForm(wtforms.Form):
