@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Przypisanie istniejącego kosztorysu</h1>
+<h5>Dla zamówienia #{{ order_id }}</h5>
+
+<p>Proszę wybrać zamówienie, którego kosztorys powinien zostać użyty.</p>
+
+<form method=post>
+  <dl>
+    {{ render_field(form.model_order_id) }}
+  </dl>
+  <p>
+    <button type="submit" class="btn btn-default btn-sm" name="preview" formtarget="_blank">Podgląd wybranego zamówienia</button>
+    <input type=submit class="btn btn-primary btn-sm" value=Zapisz>
+  </p>
+</form>
+
+{% endblock content %}

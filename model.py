@@ -91,6 +91,14 @@ customers = select_wrapper("""
     ORDER BY nazwa
 """)
 
+estimates = select_wrapper("""
+    SELECT zamowienie.id AS id, nazwa
+    FROM kosztorys
+    LEFT JOIN zlecenie_kosztorysu ON (zlecenie_kosztorysu_id = zlecenie_kosztorysu.id)
+    LEFT JOIN zamowienie ON (zamowienie_id = zamowienie.id)
+    ORDER BY id
+""")
+
 
 def save_order(name, description, client_id):
     execute_insert("""
@@ -247,3 +255,11 @@ def save_expert(name, email):
     execute_insert("""
         INSERT INTO rzeczoznawca (nazwa, email) VALUES (%s, %s)
     """, (name, email))
+
+
+def assign_estimate(order_id, model_order_id):
+    execute_insert("""
+        UPDATE zamowienie
+        SET kosztorys_id = (SELECT kosztorys_id FROM zamowienie WHERE id = %s)
+        WHERE kosztorys_id IS NULL and id = %s
+    """, (model_order_id, order_id))

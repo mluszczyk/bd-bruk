@@ -145,6 +145,22 @@ def new_expert():
     return render_template('new_expert.html', form=form)
 
 
+@app.route('/przypisz_kosztorys/<int:order_id>/', methods=['GET', 'POST'])
+def assign_estimate(order_id):
+    estimate_list = model.estimates()
+    form = forms.AssignEstimateForm.feed_with_orders(request.form, estimate_list)
+    if request.method == 'POST' and form.validate():
+        if 'preview' in request.form:
+            return redirect(url_for('order', order_id=form.model_order_id.data))
+        try:
+            model.assign_estimate(order_id, form.model_order_id.data)
+        except model.DatabaseError as e:
+            raise werkzeug.exceptions.Forbidden from e
+        else:
+            return redirect(url_for('home'))
+    return render_template('assign_estimate.html', order_id=order_id, form=form)
+
+
 if __name__ == "__main__":
     app.debug = True
     app.run()

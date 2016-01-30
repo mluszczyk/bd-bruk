@@ -24,6 +24,19 @@ class EstimateOrderForm(wtforms.Form):
         return form
 
 
+class AssignEstimateForm(wtforms.Form):
+    model_order_id = wtforms.SelectField("wzór", coerce=int)
+
+    @classmethod
+    def feed_with_orders(cls, request, model_list):
+        form = cls(request)
+        form.model_order_id.choices = [
+            (model['id'], '#{}: {}'.format(model['id'], model['nazwa']))
+            for model in model_list
+        ]
+        return form
+
+
 class NewJobForm(wtforms.Form):
     description = wtforms.TextAreaField("opis", [wtforms.validators.Length(min=4)])
     cost = wtforms.FloatField("koszt", [wtforms.validators.NumberRange(min=0)])
