@@ -82,10 +82,16 @@ def accept_jobs(order_id):
     jobs_form = forms.job_acceptance_form_factory(jobs)(request.form)
     if request.method == 'POST' and jobs_form.validate():
         data = jobs_form.get_safe_data()
-        try:
-            model.save_job_acceptance(order_id, data)
-        except model.DatabaseError as e:
-            raise werkzeug.exceptions.Forbidden from e
+        if not any(d['accepted'] for d in data):
+            try:
+                model.reject_order(order_id)
+            except model.DatabaseError as e:
+                raise werkzeug.exceptions.Forbidden from e
+        else:
+            try:
+                model.save_job_acceptance(order_id, data)
+            except model.DatabaseError as e:
+                raise werkzeug.exceptions.Forbidden from e
         return redirect(url_for('order', order_id=order_id))
     return render_template("jobs_form.html", jobs_form=jobs_form, order_id=order_id,
                            jobs=jobs)
@@ -159,6 +165,12 @@ def assign_estimate(order_id):
         else:
             return redirect(url_for('home'))
     return render_template('assign_estimate.html', order_id=order_id, form=form)
+
+
+@app.route('/odrzuc/<int:order_id>')
+def reject_order(order_id):
+    model.reject_order(order_id)
+    return redirect(url_for("home"))
 
 
 if __name__ == "__main__":

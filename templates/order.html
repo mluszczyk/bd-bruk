@@ -30,10 +30,16 @@
         </a></p>
     {% else %}
         <p>Kosztorys sporządzony {{ details.czas_sporzadzenia_kosztorysu }}.</p>
-        {% if details.zlecenie_id is none %}
-            <p><a href="{{ url_for('accept_jobs', order_id=details.id) }}" class="btn btn-default">
+        {% if details.zlecenie_id is none and not details.odrzucone %}
+            <p>
+                <a href="{{ url_for('accept_jobs', order_id=details.id) }}" class="btn btn-default">
                 Wprowadź akceptację prac przez klienta
-            </a></p>
+                </a>
+                <a href="{{ url_for('reject_order', order_id=details.id) }}" class="btn btn-danger">
+                    Zarejestruj odrzucenie
+                </a>
+
+            </p>
         {% endif %}
         <table>
             <thead>
@@ -62,13 +68,21 @@
         {% if details.zlecenie_id is not none %}
             {% if details.zaakceptowane_przez_klienta %}
                 <p>Zaakceptowane przez klienta. Zamówienie znajduje się w archwium.</p>
-            {% else %}
-                <p><a href="{{ url_for('accept_contract', order_id=details.id) }}" class="btn btn-default">
-                    Wprowadź akceptację klienta i przenieś do archwium
-                </a></p>
+            {% elif not details.odrzucone %}
+            <p><a href="{{ url_for('accept_contract', order_id=details.id) }}" class="btn btn-default">
+                Wprowadź akceptację klienta i przenieś do archwium
+            </a>
+                <a href="{{ url_for('reject_order', order_id=details.id) }}" class="btn btn-danger">
+                    Zarejestruj odrzucenie
+                </a>
+            </p>
             {% endif %}
         {% endif %}
     {% endif %}
+{% endif %}
+
+{% if details.odrzucone %}
+<p><strong>Zamówienie odrzucone.</strong></p>
 {% endif %}
 
 

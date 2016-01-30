@@ -42,7 +42,8 @@ def execute_insert(sql_string, data):
 # zamówienia, dla których należy znaleźć bądź zamówić kosztorys
 oczekujace_zamowienia = select_wrapper("""
     SELECT id, nazwa FROM zamowienie
-    WHERE kosztorys_id IS NULL AND NOT EXISTS (
+    WHERE kosztorys_id IS NULL AND odrzucone = false
+    AND NOT EXISTS (
         SELECT * FROM zlecenie_kosztorysu WHERE zamowienie_id = zamowienie.id
     )
 """)
@@ -57,7 +58,7 @@ zlecone_kosztorysy = select_wrapper("""
 # zamówienia, które czekają na zatwierdzenie kosztorysu przez klienta
 kosztorysy_do_zatwierdzenia = select_wrapper("""
     SELECT id, nazwa FROM zamowienie
-    WHERE kosztorys_id IS NOT NULL AND NOT EXISTS (
+    WHERE kosztorys_id IS NOT NULL AND odrzucone = false AND NOT EXISTS (
         SELECT * FROM zlecenie WHERE zamowienie_id = zamowienie.id
     )
 """)
@@ -67,7 +68,7 @@ kosztorysy_do_zatwierdzenia = select_wrapper("""
 zlecenia_do_zatwierdzenia = select_wrapper("""
     SELECT zamowienie.id AS id, nazwa FROM zamowienie
     INNER JOIN zlecenie ON (zamowienie.id = zamowienie_id)
-    WHERE zaakceptowane_przez_klienta = false
+    WHERE zaakceptowane_przez_klienta = false AND odrzucone = false
 """)
 
 users = select_wrapper("""
@@ -80,8 +81,8 @@ experts = select_wrapper("""
 
 archived_orders = select_wrapper("""
     SELECT zamowienie.id AS id, nazwa FROM zamowienie
-    INNER JOIN zlecenie ON (zamowienie.id = zamowienie_id)
-    WHERE zaakceptowane_przez_klienta = true
+    LEFT JOIN zlecenie ON (zamowienie.id = zamowienie_id)
+    WHERE zaakceptowane_przez_klienta = true OR odrzucone = true
     ORDER BY id
 """)
 
@@ -167,7 +168,8 @@ def get_order_details(order_id):
         klient.id AS klient_id, klient.nazwa AS nazwa_klienta, dane_do_faktury,
         email, telefon, kosztorys_id, czas_sporzadzenia as czas_sporzadzenia_kosztorysu,
         zlecenie.id as zlecenie_id,
-        zaakceptowane_przez_klienta
+        zaakceptowane_przez_klienta,
+        odrzucone
         FROM zamowienie LEFT JOIN klient ON (klient.id = klient_id)
         LEFT JOIN kosztorys ON (kosztorys.id = kosztorys_id)
         LEFT JOIN zlecenie ON (zamowienie.id = zlecenie.zamowienie_id)
@@ -263,3 +265,11 @@ def assign_estimate(order_id, model_order_id):
         SET kosztorys_id = (SELECT kosztorys_id FROM zamowienie WHERE id = %s)
         WHERE kosztorys_id IS NULL and id = %s
     """, (model_order_id, order_id))
+
+
+def reject_order(order_id):
+    execute_insert("""
+        UPDATE zamowienie
+        SET odrzucone = true
+        WHERE odrzucone = false AND id = %s
+    """, (order_id,))
